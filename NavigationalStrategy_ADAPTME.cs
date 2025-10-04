@@ -97,9 +97,10 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
 
         soundObject = new GameObject("soundObject");
         soundObject.AddComponent(typeof(AudioSource));
-        //audioSource.clip = Resources.Load(name) as AudioClip;
+        audioSource.clip = Resources.Load(name) as AudioClip;
         lightHouseLocation = eventManager.GetComponent<TargetLocator>().lighthousePrefab.transform.position; //lighthousePrefab in TargetLocator needs to be set to Public for this
-        GameObject.Instantiate(soundObject, lightHouseLocation, Quaternion.identity);
+        soundObject.transform.position = lightHouseLocation;
+
 
     }
 

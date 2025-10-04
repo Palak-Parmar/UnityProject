@@ -1,6 +1,6 @@
 using UnityEngine;
 using System;
-using System.IO; 
+using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
@@ -23,6 +23,11 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
 
     private List<Vector3> DangerZoneLocations; // Danger Zone positions
     private float distanceBoatToDangerZone;
+
+    private GameObject lighthousePrefab;
+    private GameObject soundObject;
+    private AudioSource audioSource;
+    private Vector3 lightHouseLocation;
 
     /* --------------------------------------------------------
      * BELOW ARE THE VARIABLES THAT CAN TURN ON SPECIFIC PARTS OF THE HARDWARE
@@ -65,10 +70,10 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log($"Trial started for group: {GroupName}"); 
+        Debug.Log($"Trial started for group: {GroupName}");
 
         eventManager = GameObject.Find("EventManager"); // Get the GameControl object such that we can access other scripts and variables
-        
+
         // General information for output documentation 
         date = DateTime.Now.ToString("dd-MM-yyyy");
         time = DateTime.Now.ToString("HH-mm-ss");
@@ -88,6 +93,13 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
         DangerZoneLocations.Add(eventManager.GetComponent<TargetLocator>().DangerZone9.transform.position);
         DangerZoneLocations.Add(eventManager.GetComponent<TargetLocator>().DangerZone10.transform.position);
         DangerZoneLocations.Add(eventManager.GetComponent<TargetLocator>().DangerZone11.transform.position);
+
+
+        soundObject = new GameObject("soundObject");
+        soundObject.AddComponent(typeof(AudioSource));
+        //audioSource.clip = Resources.Load(name) as AudioClip;
+        lightHouseLocation = eventManager.GetComponent<TargetLocator>().lighthousePrefab.transform.position; //lighthousePrefab in TargetLocator needs to be set to Public for this
+        GameObject.Instantiate(soundObject, lightHouseLocation, Quaternion.identity);
 
     }
 
@@ -128,11 +140,11 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
          * in real life (placed in a half circle in front of the user), the angles of -180 to -60 and +60 to +180 belong to the outermost left and right heater respectively.
          */
 
-        if(!eventManager.GetComponent<TargetLocator>().EndScene) // If we are not yet at the lighthouse, keep this line in and adapt your navigational strategy below
+        if (!eventManager.GetComponent<TargetLocator>().EndScene) // If we are not yet at the lighthouse, keep this line in and adapt your navigational strategy below
         {
             // Add/Adapt your navigational scene wihtin this if-statement:
 
-            if (PrivateAngleOfLighthouseToBoat > -180.0f && PrivateAngleOfLighthouseToBoat < -60.0f) // The lighthouse is on the left / left behind the user, we turn on the outermost left heater.
+            if (PrivateAngleOfLighthouseToBoat > -90.0f && PrivateAngleOfLighthouseToBoat < -30.0f) // The lighthouse is on the left / left behind the user, we turn on the outermost left heater.
             {
                 TurnOnHeaterLEFT = true; // This is the heater we want to turn on
                 TurnOnHeaterLEFTMIDDLE = false; // All other heaters get turned off
@@ -140,7 +152,7 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
                 TurnOnHeaterRIGHT = false;
 
                 // Example airflow: you can turn on one of the hairdyers next to that same tower by uncommenting the line below. 
-                //HairDryerOn = 1;
+                HairDryerOn = 1;
 
                 // Example scent: when we lean too much to the left, we give an apple scent (uncomment to use)
                 ScentBeingSent = "Apple";
@@ -156,77 +168,24 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
                 Sound8On = false;
 
             }
-            else if (PrivateAngleOfLighthouseToBoat > -60.0f && PrivateAngleOfLighthouseToBoat < 0.0f)
+            else if (PrivateAngleOfLighthouseToBoat > -30.0f && PrivateAngleOfLighthouseToBoat < 38.0f)
             {
-                TurnOnHeaterLEFT = false; 
+                TurnOnHeaterLEFT = false;
                 TurnOnHeaterLEFTMIDDLE = true; // This is the heater we want to turn on
-                TurnOnHeaterRIGHTMIDDLE = false;
+                TurnOnHeaterRIGHTMIDDLE = true;
                 TurnOnHeaterRIGHT = false;
 
-                // Example airflow: you can turn on one of the hairdyers next to that same tower by uncommenting the line below. 
-                //HairDryerOn = 3;
-
-                // Example scent: we give a popcorn scent (uncomment to use)
-                ScentBeingSent = "Popcorn";
-
-                // Example sound
-                Sound1On = false;
-                Sound2On = true;
-                Sound3On = false;
-                Sound4On = false;
-                Sound5On = false;
-                Sound6On = false;
-                Sound7On = false;
-                Sound8On = false;
             }
-       
-            else if (PrivateAngleOfLighthouseToBoat > 0.0f && PrivateAngleOfLighthouseToBoat < 60.0f)
+
+
+            else if (PrivateAngleOfLighthouseToBoat > 30.0f && PrivateAngleOfLighthouseToBoat < 90.0f)
             {
                 TurnOnHeaterLEFT = false;
-                TurnOnHeaterLEFTMIDDLE = false; 
-                TurnOnHeaterRIGHTMIDDLE = true; // This is the heater we want to turn on
-                TurnOnHeaterRIGHT = false;
-
-                // Example airflow: you can turn on one of the hairdyers next to that same tower by uncommenting the line below. 
-                //HairDryerOn = 5;
-
-                // Example scent: we give a lemon scent  (uncomment to use)
-                ScentBeingSent = "Lemon";
-
-                // Example sound
-                Sound1On = false;
-                Sound2On = false;
-                Sound3On = true;
-                Sound4On = false;
-                Sound5On = false;
-                Sound6On = false;
-                Sound7On = false;
-                Sound8On = false;
-            }
-            else if (PrivateAngleOfLighthouseToBoat > 60.0f && PrivateAngleOfLighthouseToBoat < 180.0f)
-            {
-                TurnOnHeaterLEFT = false;
-                TurnOnHeaterLEFTMIDDLE = false; 
+                TurnOnHeaterLEFTMIDDLE = false;
                 TurnOnHeaterRIGHTMIDDLE = false;
                 TurnOnHeaterRIGHT = true; // This is the heater we want to turn on
 
-                // Example airflow: you can turn on one of the hairdyers next to that same tower by uncommenting the line below. 
-                //HairDryerOn = 7;
-
-                // Example scent: we give a lavender scent (uncomment to use)
-                ScentBeingSent = "Lavender";
-
-                // Example sound
-                Sound1On = false;
-                Sound2On = false;
-                Sound3On = false;
-                Sound4On = true;
-                Sound5On = false;
-                Sound6On = false;
-                Sound7On = false;
-                Sound8On = false;
             }
-            
         }
 
 
@@ -234,30 +193,30 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
          * Based on the position of the danger zones, we check how close we are (remember that the circles have a range of 10   units).
          * I'll leave it to you to implement the right cues to avoid a user hitting a danger zone!
          */
-         foreach (Vector3 DZlocation in DangerZoneLocations)
-    {
-        float distance = Vector3.Distance(DZlocation, RowBoatPrefab.transform.position);
-        float angle = CalculateAngleToBarrier(DZlocation);
-
-        if (distance < 40f && angle >= -90f && angle <= 90f) // Only front half
+        foreach (Vector3 DZlocation in DangerZoneLocations)
         {
-            if (angle >= -90f && angle < -60f)
-             {HairDryerOn = 1; } // Dryer 1
-            else if (angle >= -60f && angle < 0f) {HairDryerOn = 2;} // Dryer 2 and 3
-            else if (angle >= 0f && angle < 45f)  {HairDryerOn = 4;} // Dryer 4 and 5
-            else if (angle >= 45f && angle < 75f)  {HairDryerOn = 6;} // Dryer 6 and 7    
-            else if (angle >= 75f && angle <= 90f) {HairDryerOn = 8;} // Dryer 8
+            float distance = Vector3.Distance(DZlocation, RowBoatPrefab.transform.position);
+            float angle = CalculateAngleToBarrier(DZlocation);
 
-            //Debug.Log("We're getting really close to a danger zone...)
+            if (distance < 40f && angle >= -90f && angle <= 90f) // Only front half
+            {
+                if (angle >= -90f && angle < -60f)
+                { HairDryerOn = 1; } // Dryer 1
+                else if (angle >= -60f && angle < 0f) { HairDryerOn = 2; } // Dryer 2 and 3
+                else if (angle >= 0f && angle < 45f) { HairDryerOn = 4; } // Dryer 4 and 5
+                else if (angle >= 45f && angle < 75f) { HairDryerOn = 6; } // Dryer 6 and 7    
+                else if (angle >= 75f && angle <= 90f) { HairDryerOn = 8; } // Dryer 8
+
+                //Debug.Log("We're getting really close to a danger zone...)
+            }
         }
-    }
-    //foreach (Vector3 DZlocation in DangerZoneLocations)
-       // {
-         //   distanceBoatToDangerZone = Vector3.Distance(DZlocation, RowBoatPrefab.transform.position);
-           // //Debug.Log($"Danger Zone at ({dangerZonePosition.x:F2}, {dangerZonePosition.y:F2}, {dangerZonePosition.z:F2}) at distance {float distanceBoatToDangerZone:F2}");
-           // if (distanceBoatToDangerZone < 40)
-            //{
-              //  Debug.Log("We're getting really close to a danger zone...
+        //foreach (Vector3 DZlocation in DangerZoneLocations)
+        // {
+        //   distanceBoatToDangerZone = Vector3.Distance(DZlocation, RowBoatPrefab.transform.position);
+        // //Debug.Log($"Danger Zone at ({dangerZonePosition.x:F2}, {dangerZonePosition.y:F2}, {dangerZonePosition.z:F2}) at distance {float distanceBoatToDangerZone:F2}");
+        // if (distanceBoatToDangerZone < 40)
+        //{
+        //  Debug.Log("We're getting really close to a danger zone...
 
         if (Time.time >= nextWriteTime)
         {
@@ -268,11 +227,11 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
     }
 
     private float CalculateAngleToBarrier(Vector3 barrierPos)
-{
-    Vector3 direction = barrierPos - RowBoatPrefab.transform.position;
-    Vector3 horizontalDir = new Vector3(direction.x, 0f, direction.z);
-    return Vector3.SignedAngle(RowBoatPrefab.transform.forward, horizontalDir, Vector3.up);
-}
+    {
+        Vector3 direction = barrierPos - RowBoatPrefab.transform.position;
+        Vector3 horizontalDir = new Vector3(direction.x, 0f, direction.z);
+        return Vector3.SignedAngle(RowBoatPrefab.transform.forward, horizontalDir, Vector3.up);
+    }
 
     public void WriteCSV() // This void will write all relevant data to an Excel file saved in the folder 'SavedData'. This CSV is now updated at every second (see the Update() void). You can adapt this to better capture relevant data from your trial.
     {
@@ -300,5 +259,5 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
 
 
 
- }
+}
 

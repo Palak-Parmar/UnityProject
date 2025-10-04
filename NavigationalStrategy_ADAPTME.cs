@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using UnityEngine.Audio;
 
 public class NavigationalStrategy_ADAPTME : MonoBehaviour
 {
@@ -28,6 +29,10 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
     private GameObject soundObject;
     private AudioSource audioSource;
     private Vector3 lightHouseLocation;
+    [SerializeField]
+    public AudioResource myAudioResource;
+    [SerializeField]
+    public AudioClip myAudioClip;
 
     /* --------------------------------------------------------
      * BELOW ARE THE VARIABLES THAT CAN TURN ON SPECIFIC PARTS OF THE HARDWARE
@@ -97,9 +102,19 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
 
         soundObject = new GameObject("soundObject");
         soundObject.AddComponent(typeof(AudioSource));
-        audioSource.clip = Resources.Load(name) as AudioClip;
         lightHouseLocation = eventManager.GetComponent<TargetLocator>().lighthousePrefab.transform.position; //lighthousePrefab in TargetLocator needs to be set to Public for this
         soundObject.transform.position = lightHouseLocation;
+        soundObject.SetActive(true);
+        AudioSource audioSource = soundObject.GetComponent<AudioSource>();
+
+        //var soundFile = Resources.Load<AudioClip>("lighthouse.wav");
+
+        //AudioClip myClip = myAudioClip;
+        audioSource.resource = myAudioResource;
+        //audioSource.clip = soundFile;
+        //print(audioSource.resource == soundObject.GetComponent<AudioSource>().resource);
+
+
 
 
     }
@@ -145,6 +160,19 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
         {
             // Add/Adapt your navigational scene wihtin this if-statement:
 
+
+            if (audioSource != null && audioSource.clip != null) // There's an audio source with a clip assigned to the object
+            {
+                audioSource.spatialBlend = 1f; // Double check that audio is spatial
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+            else
+            {
+                //print("There's a missing AudioSource or AudioClip on the prefab.");
+            }
+
+
             if (PrivateAngleOfLighthouseToBoat > -90.0f && PrivateAngleOfLighthouseToBoat < -30.0f) // The lighthouse is on the left / left behind the user, we turn on the outermost left heater.
             {
                 TurnOnHeaterLEFT = true; // This is the heater we want to turn on
@@ -158,15 +186,6 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
                 // Example scent: when we lean too much to the left, we give an apple scent (uncomment to use)
                 ScentBeingSent = "Apple";
 
-                // Example sound:
-                Sound1On = true;
-                Sound2On = false;
-                Sound3On = false;
-                Sound4On = false;
-                Sound5On = false;
-                Sound6On = false;
-                Sound7On = false;
-                Sound8On = false;
 
             }
             else if (PrivateAngleOfLighthouseToBoat > -30.0f && PrivateAngleOfLighthouseToBoat < 38.0f)

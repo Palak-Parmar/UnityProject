@@ -8,7 +8,7 @@ using UnityEngine.Audio;
 public class NavigationalStrategy_ADAPTME : MonoBehaviour
 {
     [SerializeField]
-    public string GroupName = "Group"; // ADAPT: add your group name here (in one word, e.g. 'Group-Anne-James-Louise').
+    public string GroupName = "Group-4-Noah-Daan-Palak-Aryan"; // ADAPT: add your group name here (in one word, e.g. 'Group-Anne-James-Louise').
 
     // Reference to boat
     [SerializeField]
@@ -26,13 +26,15 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
     private float distanceBoatToDangerZone;
 
     private GameObject lighthousePrefab;
-    private GameObject soundObject;
+
     private AudioSource audioSource;
     private Vector3 lightHouseLocation;
     [SerializeField]
     public AudioResource myAudioResource;
     [SerializeField]
     public AudioClip myAudioClip;
+    [SerializeField]
+    public GameObject soundObject;
 
     /* --------------------------------------------------------
      * BELOW ARE THE VARIABLES THAT CAN TURN ON SPECIFIC PARTS OF THE HARDWARE
@@ -100,17 +102,22 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
         DangerZoneLocations.Add(eventManager.GetComponent<TargetLocator>().DangerZone11.transform.position);
 
 
-        soundObject = new GameObject("soundObject");
-        soundObject.AddComponent(typeof(AudioSource));
+        //soundObject = new GameObject("soundObject");
+        //soundObject.AddComponent(typeof(AudioSource));
         lightHouseLocation = eventManager.GetComponent<TargetLocator>().lighthousePrefab.transform.position; //lighthousePrefab in TargetLocator needs to be set to Public for this
         soundObject.transform.position = lightHouseLocation;
-        soundObject.SetActive(true);
-        AudioSource audioSource = soundObject.GetComponent<AudioSource>();
+        //soundObject.SetActive(true);
+        //AudioSource audioSource = soundObject.GetComponent<AudioSource>();
+        //audioSource.spatialBlend = 1f; // Double check that audio is spatial
+        //audioSource.loop = true;
+        //audioSource.rolloffMode = AudioRolloffMode.Linear;
 
-        //var soundFile = Resources.Load<AudioClip>("lighthouse.wav");
+
+        var soundFile = Resources.Load<AudioClip>("lighthouse.wav");
 
         //AudioClip myClip = myAudioClip;
-        audioSource.resource = myAudioResource;
+        //audioSource.resource = soundFile;
+        //audioSource.Resource = myAudioResource;
         //audioSource.clip = soundFile;
         //print(audioSource.resource == soundObject.GetComponent<AudioSource>().resource);
 
@@ -163,8 +170,6 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
 
             if (audioSource != null && audioSource.clip != null) // There's an audio source with a clip assigned to the object
             {
-                audioSource.spatialBlend = 1f; // Double check that audio is spatial
-                audioSource.loop = true;
                 audioSource.Play();
             }
             else
@@ -280,4 +285,5 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
 
 
 }
+
 

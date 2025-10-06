@@ -33,7 +33,6 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
     public AudioResource myAudioResource;
     [SerializeField]
     public AudioClip myAudioClip;
-    [SerializeField]
     public GameObject soundObject;
 
     /* --------------------------------------------------------
@@ -102,24 +101,23 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
         DangerZoneLocations.Add(eventManager.GetComponent<TargetLocator>().DangerZone11.transform.position);
 
 
-        //soundObject = new GameObject("soundObject");
-        //soundObject.AddComponent(typeof(AudioSource));
+        soundObject = new GameObject("soundObject");
+        soundObject.AddComponent(typeof(AudioSource));
         lightHouseLocation = eventManager.GetComponent<TargetLocator>().lighthousePrefab.transform.position; //lighthousePrefab in TargetLocator needs to be set to Public for this
         soundObject.transform.position = lightHouseLocation;
-        //soundObject.SetActive(true);
-        //AudioSource audioSource = soundObject.GetComponent<AudioSource>();
-        //audioSource.spatialBlend = 1f; // Double check that audio is spatial
-        //audioSource.loop = true;
-        //audioSource.rolloffMode = AudioRolloffMode.Linear;
+        soundObject.SetActive(true);
+        AudioSource audioSource = soundObject.GetComponent<AudioSource>();
+        audioSource.spatialBlend = 1f; // Double check that audio is spatial
+        audioSource.loop = true;
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
 
 
-        var soundFile = Resources.Load<AudioClip>("lighthouse.wav");
 
-        //AudioClip myClip = myAudioClip;
-        //audioSource.resource = soundFile;
-        //audioSource.Resource = myAudioResource;
-        //audioSource.clip = soundFile;
-        //print(audioSource.resource == soundObject.GetComponent<AudioSource>().resource);
+        AudioClip myClip = myAudioClip;
+        audioSource.resource = myAudioResource;
+        audioSource.clip = soundFile;
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
+
 
 
 
@@ -185,13 +183,6 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
                 TurnOnHeaterRIGHTMIDDLE = false;
                 TurnOnHeaterRIGHT = false;
 
-                // Example airflow: you can turn on one of the hairdyers next to that same tower by uncommenting the line below. 
-                HairDryerOn = 1;
-
-                // Example scent: when we lean too much to the left, we give an apple scent (uncomment to use)
-                ScentBeingSent = "Apple";
-
-
             }
             else if (PrivateAngleOfLighthouseToBoat > -30.0f && PrivateAngleOfLighthouseToBoat < 38.0f)
             {
@@ -232,16 +223,10 @@ public class NavigationalStrategy_ADAPTME : MonoBehaviour
                 else if (angle >= 45f && angle < 75f) { HairDryerOn = 6; } // Dryer 6 and 7    
                 else if (angle >= 75f && angle <= 90f) { HairDryerOn = 8; } // Dryer 8
 
-                //Debug.Log("We're getting really close to a danger zone...)
+                Debug.Log("We're getting really close to a danger zone...)
             }
         }
-        //foreach (Vector3 DZlocation in DangerZoneLocations)
-        // {
-        //   distanceBoatToDangerZone = Vector3.Distance(DZlocation, RowBoatPrefab.transform.position);
-        // //Debug.Log($"Danger Zone at ({dangerZonePosition.x:F2}, {dangerZonePosition.y:F2}, {dangerZonePosition.z:F2}) at distance {float distanceBoatToDangerZone:F2}");
-        // if (distanceBoatToDangerZone < 40)
-        //{
-        //  Debug.Log("We're getting really close to a danger zone...
+
 
         if (Time.time >= nextWriteTime)
         {
